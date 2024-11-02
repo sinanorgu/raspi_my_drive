@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='browse_style.css') }}">
+    <title>Browse Files</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Files in {{ path or "Root" }}</h2>
+        
+        <form class="upload-form" method="POST" action="{{ url_for('browse_files', path=path) }}" enctype="multipart/form-data">
+            <input type="file" name="files" required multiple>
+            <button type="submit">Upload</button>
+        </form>
+        
+        <!-- Klasör ekleme formu -->
+        <form method="POST" action="{{ url_for('browse_files', path=path) }}">
+            <input type="text" name="folder_name" placeholder="Yeni klasör adı" required>
+            <button type="submit">Klasör Ekle</button>
+        </form>
+
+
+        <ul>
+            {% for item in items %}
+                <li>
+                    <a href="{{ url_for('browse_files', path=path + '/' + item) }}">{{ item }}</a>
+                    
+                    <!-- Silme butonu -->
+                    <form method="POST" action="{{ url_for('browse_files', path=path) }}" style="display: inline;">
+                        <input type="hidden" name="delete_item" value="{{ item }}">
+                        <button type="submit">Sil</button>
+                    </form>
+    
+                    <!-- Yeniden adlandırma formu -->
+                    <form method="POST" action="{{ url_for('browse_files', path=path) }}" style="display: inline;">
+                        <input type="hidden" name="old_name" value="{{ item }}">
+                        <input type="text" name="new_name" placeholder="Yeni isim" required>
+                        <button type="submit">Yeniden Adlandır</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/saklasamani/browse/">Back to Root</a>
+    </div>
+</body>
+</html>
